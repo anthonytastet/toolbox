@@ -1,0 +1,106 @@
+---
+- name: Provisionning anthony's debian based environment
+  hosts: all
+  become: true
+  tasks:
+    # update package list
+    - name: update package list
+      ansible.builtin.apt:
+        update_cache: yes
+
+    # upgrade packages
+    - name: upgrade package list
+      ansible.builtin.apt:
+        upgrade: "yes"
+
+    # utils
+    - name: install utils
+      ansible.builtin.apt:
+        name: "{{ utils_packages }}"
+        state: latest
+      vars:
+        utils_packages:
+          - coreutils
+          - apt-utils
+          - xz-utils
+          - gnupg
+          - vim
+          - curl
+          - wget
+          - xdg-utils
+          - gzip
+          - zip
+          - man-db
+          - tree
+          - ssh
+
+    # git
+    - name: install git
+      ansible.builtin.apt:
+        name: git
+        state: latest
+
+    # gh
+    - name: install gh
+      ansible.builtin.apt:
+        name: gh
+        state: latest
+
+    # # vscode
+    # - name: install vscode
+    #   ansible.builtin.apt:
+    #     deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+
+    # nodejs
+    - name: install nodejs
+      ansible.builtin.apt:
+        name: nodejs
+        state: latest
+
+    # npm
+    - name: install npm
+      ansible.builtin.apt:
+        name: npm
+        state: latest
+
+    # okular
+    - name: install okular
+      ansible.builtin.apt:
+        name: okular
+        state: latest
+
+    # set custom aliases
+    - name: set custom alias 'll' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias ll="ls -lh"'
+        state: present
+
+    - name: set custom alias 'la' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias la="ls -lha"'
+        state: present
+
+    - name: set custom alias 'drive' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias drive="cd /mnt/g/"'
+        state: present
+
+    - name: set custom alias 'windows' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias windows="cd /mnt/c/"'
+        state: present
+
+    - name: set custom alias 'open' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias open="xdg-open"'
+        state: present
