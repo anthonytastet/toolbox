@@ -21,6 +21,7 @@
       vars:
         utils_packages:
           - coreutils
+          - desktop-file-utils
           - apt-utils
           - xz-utils
           - gnupg
@@ -33,6 +34,35 @@
           - man-db
           - tree
           - ssh
+
+    # wslu (utils for WSL)
+    - name: install wslu (1/5) | install required packages
+      ansible.builtin.apt:
+        name: "{{ wsl_utils_packages }}"
+        state: latest
+      vars:
+        wsl_utils_packages:
+          - gnupg2
+          - apt-transport-https
+    - name: install wslu (2/5) | create keyring file to host the public key
+      ansible.builtin.file:
+        path: /etc/apt/trusted.gpg.d/wslu.asc
+        state: touch
+        mode: u=rw,g=r,o=r
+    - name: install wslu (3/5) | download package repository's public key
+      ansible.builtin.apt_key:
+        url: https://pkg.wslutiliti.es/public.key
+        state: present
+        keyring: /etc/apt/trusted.gpg.d/wslu.asc
+    - name: install wslu (4/5) | add package repository to the sources list
+      ansible.builtin.apt_repository:
+        repo: deb https://pkg.wslutiliti.es/debian bullseye main
+        state: present
+    - name: install wslu (5/5) | install wslu package
+      ansible.builtin.apt:
+        name: wslu
+        state: latest
+        update_cache: yes
 
     # git
     - name: install git
@@ -64,10 +94,10 @@
         state: latest
 
     # okular
-    - name: install okular
-      ansible.builtin.apt:
-        name: okular
-        state: latest
+    # - name: install okular
+    #   ansible.builtin.apt:
+    #     name: okular
+    #     state: latest
 
     # set custom aliases
     - name: set custom alias 'll' in /home/anthony/.bashrc
@@ -82,6 +112,13 @@
         path: /home/anthony/.bashrc
         insertafter: "^# some more ls aliases"
         line: 'alias la="ls -lha"'
+        state: present
+
+    - name: set custom alias 'lt' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias lt="tree"'
         state: present
 
     - name: set custom alias 'drive' in /home/anthony/.bashrc
