@@ -3,4 +3,5 @@
 # reload-environment
 # reload the shell environment
 
-exec $SHELL
+# exec $SHELL 
+source /etc/bash.bashrc

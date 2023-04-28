@@ -3,6 +3,11 @@
   hosts: all
   become: true
   tasks:
+    # register content of /usr/bin/env in an ansible variable
+    - name: register content of /usr/bin/env
+      ansible.builtin.shell: env
+      register: env_content
+
     # update package list
     - name: update package list
       ansible.builtin.apt:
@@ -36,33 +41,33 @@
           - ssh
 
     # wslu (utils for WSL)
-    - name: install wslu (1/5) | install required packages
-      ansible.builtin.apt:
-        name: "{{ wsl_utils_packages }}"
-        state: latest
-      vars:
-        wsl_utils_packages:
-          - gnupg2
-          - apt-transport-https
-    - name: install wslu (2/5) | create keyring file to host the public key
-      ansible.builtin.file:
-        path: /etc/apt/trusted.gpg.d/wslu.asc
-        state: touch
-        mode: u=rw,g=r,o=r
-    - name: install wslu (3/5) | download package repository's public key
-      ansible.builtin.apt_key:
-        url: https://pkg.wslutiliti.es/public.key
-        state: present
-        keyring: /etc/apt/trusted.gpg.d/wslu.asc
-    - name: install wslu (4/5) | add package repository to the sources list
-      ansible.builtin.apt_repository:
-        repo: deb https://pkg.wslutiliti.es/debian bullseye main
-        state: present
-    - name: install wslu (5/5) | install wslu package
-      ansible.builtin.apt:
-        name: wslu
-        state: latest
-        update_cache: yes
+    # - name: install wslu (1/5) | install required packages
+    #   ansible.builtin.apt:
+    #     name: "{{ wsl_utils_packages }}"
+    #     state: present
+    #   vars:
+    #     wsl_utils_packages:
+    #       - gnupg2
+    #       - apt-transport-https
+    # - name: install wslu (2/5) | create keyring file to host the public key
+    #   ansible.builtin.file:
+    #     path: /etc/apt/trusted.gpg.d/wslu.asc
+    #     state: touch
+    #     mode: u=rw,g=r,o=r
+    # - name: install wslu (3/5) | download package repository's public key
+    #   ansible.builtin.apt_key:
+    #     url: https://pkg.wslutiliti.es/public.key
+    #     state: present
+    #     keyring: /etc/apt/trusted.gpg.d/wslu.asc
+    # - name: install wslu (4/5) | add package repository to the sources list
+    #   ansible.builtin.apt_repository:
+    #     repo: deb https://pkg.wslutiliti.es/debian bullseye main
+    #     state: present
+    # - name: install wslu (5/5) | install wslu package
+    #   ansible.builtin.apt:
+    #     name: wslu
+    #     state: present
+    #     update_cache: yes
 
     # git
     - name: install git
@@ -140,4 +145,13 @@
         path: /home/anthony/.bashrc
         insertafter: "^# some more ls aliases"
         line: 'alias open="xdg-open"'
+        state: absent
+      # when: env_content.stdout.find('WSL') != -1
+
+    - name: set custom alias 'open' for 'wsl-open' in /home/anthony/.bashrc
+      ansible.builtin.lineinfile:
+        path: /home/anthony/.bashrc
+        insertafter: "^# some more ls aliases"
+        line: 'alias open="wsl-open"'
         state: present
+      when: env_content.stdout.find('WSL') == -1
