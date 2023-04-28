@@ -4,8 +4,10 @@
 # opens a file or url with the default program 
 # on a Windows system equipped with WSL
 
-if [ -e $1 ]; then
-	/bin/bash -c "powershell.exe -Command Start-Process \`wslpath -aw $1\`"
+if [ -e "$1" ]; then
+	itemPathRaw=$(wslpath -aw "$1" )
+	itemPathCleaned=$(echo "$itemPathRaw" | sed -e 's/\ /\` /g')
+	powershell.exe -Command Start-Process "$itemPathCleaned"
 else
-	/bin/bash -c "powershell.exe -Command Start-Process $1"
+	powershell.exe -Command Start-Process "$1"
 fi
