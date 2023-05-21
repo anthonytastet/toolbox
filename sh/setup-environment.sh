@@ -2,11 +2,10 @@
 
 # setup anthony's environment
 
-shopt -s expand_aliases && \
 apt update && \
 apt upgrade -y && \
 apt install -y xdg-utils && \
-apt install -y firefox-esr && \
+# apt install -y firefox-esr && \
 apt install -y git && \
 git config --global user.name anthony && \
 apt install -y gh && \

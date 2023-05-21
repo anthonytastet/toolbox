@@ -40,8 +40,7 @@ try:
     with open(file, "r+") as file:
         file.seek(0, 0)
         url = file.readline()
-        open_url = subprocess.Popen(['/bin/bash', '-i', '-c', f"open ${url}"], shell=False)
-        # open_url = subprocess.Popen(["open", url])
+        open_url = subprocess.Popen(["firefox", url])
 except:
     print("an exception occurred [2/2]")
     exit("'open url' aborted.")

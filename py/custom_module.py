@@ -124,11 +124,9 @@ def get_filePermissions(file):
     # print("permission mask: ", permission_mask_humanreadable)
     return permission_mask_humanreadable
 
-
 def get_currentLocation():
     from os import curdir
     return curdir
-
 
 def get_childItems(location: str):
     from os import listdir
@@ -150,14 +148,14 @@ def get_fileExtension(file: str):
         file_extension = "no-extension"
     return file_extension
 
-def clean_fileName(file_name: str):
+def clean_fileName(file_name: str, word_separator: str):
     file_extension = get_fileExtension(file_name)
-    should_useUnderscores = ("py", "js")
 
-    if file_extension in should_useUnderscores:
-        word_separator = "_"
-    else:
-        word_separator = "-"
+    # should_useUnderscores = ("py", "js")
+    # if file_extension in should_useUnderscores:
+    #     word_separator = "_"
+    # else:
+    #     word_separator = "-"
 
     file_name = file_name.strip()
     file_name.lstrip("-_,")

@@ -4,7 +4,7 @@
   become: true
   tasks:
     # register content of /usr/bin/env in an ansible variable
-    - name: register content of /usr/bin/env
+    - name: load content of /usr/bin/env
       ansible.builtin.shell: env
       register: env_content
 
@@ -104,54 +104,67 @@
     #     name: okular
     #     state: latest
 
-    # set custom aliases
-    - name: set custom alias 'll' in /home/anthony/.bashrc
+    #firefox
+    - name: uninstall firefox
+      ansible.builtin.apt:
+        name: firefox-esr
+        state: absent
+
+    # set alias expansion
+    - name: set alias expansion in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertbefore: "EOF"
+        line: "\nshopt -s expand_aliases"
+        state: present
+
+    - name: set custom alias 'll' in /etc/bash.bashrc
+      ansible.builtin.lineinfile:
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias ll="ls -lh"'
         state: present
 
-    - name: set custom alias 'la' in /home/anthony/.bashrc
+    - name: set custom alias 'la' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias la="ls -lha"'
         state: present
 
-    - name: set custom alias 'lt' in /home/anthony/.bashrc
+    - name: set custom alias 'lt' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias lt="tree"'
         state: present
 
-    - name: set custom alias 'drive' in /home/anthony/.bashrc
+    - name: set custom alias 'drive' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias drive="cd /mnt/g/"'
         state: present
 
-    - name: set custom alias 'windows' in /home/anthony/.bashrc
+    - name: set custom alias 'windows' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias windows="cd /mnt/c/"'
         state: present
 
-    - name: set custom alias 'open' in /home/anthony/.bashrc
+    - name: set custom alias 'open' for 'xdg-open' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias open="xdg-open"'
-        state: absent
-      # when: env_content.stdout.find('WSL') != -1
+        state: present
+      when: env_content.stdout.find('WSL') != -1
 
-    - name: set custom alias 'open' for 'wsl-open' in /home/anthony/.bashrc
+    - name: set custom alias 'open' for 'wsl-open' in /etc/bash.bashrc
       ansible.builtin.lineinfile:
-        path: /home/anthony/.bashrc
-        insertafter: "^# some more ls aliases"
+        path: /etc/bash.bashrc
+        insertafter: "EOF"
         line: 'alias open="wsl-open"'
         state: present
       when: env_content.stdout.find('WSL') == -1
