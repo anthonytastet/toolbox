@@ -81,10 +81,10 @@
         name: gh
         state: latest
 
-    # # vscode
-    # - name: install vscode
-    #   ansible.builtin.apt:
-    #     deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+    # vscode
+    - name: install vscode
+      ansible.builtin.apt:
+        deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
 
     # nodejs
     - name: install nodejs
@@ -104,11 +104,11 @@
     #     name: okular
     #     state: latest
 
-    #firefox
-    - name: uninstall firefox
-      ansible.builtin.apt:
-        name: firefox-esr
-        state: absent
+    # #firefox
+    # - name: uninstall firefox
+    #   ansible.builtin.apt:
+    #     name: firefox-esr
+    #     state: absent
 
     # set alias expansion
     - name: set alias expansion in /etc/bash.bashrc
@@ -161,10 +161,10 @@
         state: present
       when: env_content.stdout.find('WSL') != -1
 
-    - name: set custom alias 'open' for 'wsl-open' in /etc/bash.bashrc
-      ansible.builtin.lineinfile:
-        path: /etc/bash.bashrc
-        insertafter: "EOF"
-        line: 'alias open="wsl-open"'
-        state: present
-      when: env_content.stdout.find('WSL') == -1
+    # - name: set custom alias 'open' for 'wsl-open' in /etc/bash.bashrc
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/bash.bashrc
+    #     insertafter: "EOF"
+    #     line: 'alias open="wsl-open"'
+    #     state: present
+    #   when: env_content.stdout.find('WSL') == -1
